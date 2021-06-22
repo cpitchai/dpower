@@ -3,17 +3,28 @@ data:
   default.cfg: |+
     top; configure terminal;
 
-    # configuration b770868390d1465e9a7f8a453e6751af generated Mon Jun 21 05:56:53 2021; firmware version 330590
+    # configuration generated Fri Oct 30 10:57:42 2020; firmware version 312001
 
     %if% available "domain-settings"
 
     domain-settings
       admin-state enabled
       password-treatment masked
-      config-dir config:///
     exit
 
     %endif%
+
+    %if% available "include-config"
+
+    include-config "healthCheck"
+      config-url "config:///health-check.cfg"
+      auto-execute
+      no interface-detection
+    exit
+
+    %endif%
+
+    exec "config:///health-check.cfg"
 
     %if% available "radius"
 
@@ -50,8 +61,6 @@ data:
 
     %endif%
 
-    exec config:///auto-user.cfg
-
     %if% available "snmp"
 
     snmp
@@ -59,6 +68,7 @@ data:
       version 2c
       ip-address 0.0.0.0
       port 1161
+      community "public" "default" "read-only" "0.0.0.0/0"
       security-level authPriv
       access-level read-only
       trap-default-subscriptions
@@ -181,12 +191,19 @@ data:
     logging event default-log "mgmt" "notice"
     logging event default-log "system" "notice"
 
+    %if% available "usergroup"
+
+    usergroup "read"
+      access-policy */*/*?Access=r
+    exit
+
+    %endif%
+
     %if% available "rbm"
 
     rbm
       admin-state enabled
       au-method local
-      ssh-au-method ""
       no au-ldap-search
       ldap-prefix "cn="
       no au-force-dn-ldap-order
@@ -197,6 +214,7 @@ data:
       no mc-ldap-search
       mc-ldap-readtimeout 60
       fallback-login disabled
+      no apply-cli
       no restrict-admin
       pwd-minimum-length 6
       no pwd-mixed-case
@@ -267,23 +285,6 @@ data:
 
     %endif%
 
-    %if% available "parse-settings"
-
-    parse-settings "default"
-      document-type detect
-      document-size 4194304
-      nesting-depth 512
-      width 4096
-      name-length 256
-      value-length 8192
-      unique-prefixes 1024
-      unique-namespaces 1024
-      unique-names 1024
-      number-length 128
-    exit
-
-    %endif%
-
     %if% available "api-routing"
 
     api-routing "default-api-route"
@@ -291,11 +292,16 @@ data:
 
     %endif%
 
+    %if% available "api-rate-limit"
+
+    api-rate-limit "default-api-ratelimit"
+    exit
+
+    %endif%
+
     %if% available "api-security"
 
     api-security "default-api-security"
-      title "default-security"
-      correlation-path "$.assembly.execute[4]"
     exit
 
     %endif%
@@ -315,237 +321,6 @@ data:
 
     %endif%
 
-    %if% available "assembly-html-page"
-
-    assembly-html-page "default-html-page"
-      title "default-html-page"
-      correlation-path "$.assembly.execute[1]"
-      output "message"
-    exit
-
-    %endif%
-
-    %if% available "assembly-rate-limit"
-
-    assembly-rate-limit "default-api-ratelimit"
-      title "default-ratelimit"
-      correlation-path "$.assembly.execute[3]"
-      source plan-default
-    exit
-
-    %endif%
-
-    action "Test1_default_request-rule_defaultaction_result"
-      reset
-      type results
-      input "INPUT"
-      parse-settings-result-type none
-      transform-language none
-      output "OUTPUT"
-      no charset-transparency
-      named-inouts default
-      ssl-client-type proxy
-      output-type default
-      no transactional
-      soap-validation body
-      sql-source-type static
-      strip-signature
-      no asynchronous
-      results-mode first-available
-      retry-count 0
-      retry-interval 1000
-      no multiple-outputs
-      iterator-type XPATH
-      timeout 0
-      http-method GET
-      http-method-limited POST
-      http-method-limited2 POST
-    exit
-
-    action "Test1_default_request-rule_defaultaction_slm"
-      reset
-      type slm
-      input "INPUT"
-      parse-settings-result-type none
-      transform-language none
-      output "NULL"
-      no charset-transparency
-      named-inouts default
-      ssl-client-type proxy
-      no transactional
-      slm "Test1"
-      soap-validation body
-      sql-source-type static
-      strip-signature
-      no asynchronous
-      results-mode first-available
-      retry-count 0
-      retry-interval 1000
-      no multiple-outputs
-      iterator-type XPATH
-      timeout 0
-      http-method GET
-      http-method-limited POST
-      http-method-limited2 POST
-    exit
-
-    action "Test1_default_response-rule_defaultaction_result"
-      reset
-      type results
-      input "INPUT"
-      parse-settings-result-type none
-      transform-language none
-      output "OUTPUT"
-      no charset-transparency
-      named-inouts default
-      ssl-client-type proxy
-      output-type default
-      no transactional
-      soap-validation body
-      sql-source-type static
-      strip-signature
-      no asynchronous
-      results-mode first-available
-      retry-count 0
-      retry-interval 1000
-      no multiple-outputs
-      iterator-type XPATH
-      timeout 0
-      http-method GET
-      http-method-limited POST
-      http-method-limited2 POST
-    exit
-
-    action "Test_default_request-rule_defaultaction_result"
-      reset
-      type results
-      input "INPUT"
-      parse-settings-result-type none
-      transform-language none
-      output "OUTPUT"
-      no charset-transparency
-      named-inouts default
-      ssl-client-type proxy
-      output-type default
-      no transactional
-      soap-validation body
-      sql-source-type static
-      strip-signature
-      no asynchronous
-      results-mode first-available
-      retry-count 0
-      retry-interval 1000
-      no multiple-outputs
-      iterator-type XPATH
-      timeout 0
-      http-method GET
-      http-method-limited POST
-      http-method-limited2 POST
-    exit
-
-    action "Test_default_request-rule_defaultaction_slm"
-      reset
-      type slm
-      input "INPUT"
-      parse-settings-result-type none
-      transform-language none
-      output "NULL"
-      no charset-transparency
-      named-inouts default
-      ssl-client-type proxy
-      no transactional
-      slm "Test"
-      soap-validation body
-      sql-source-type static
-      strip-signature
-      no asynchronous
-      results-mode first-available
-      retry-count 0
-      retry-interval 1000
-      no multiple-outputs
-      iterator-type XPATH
-      timeout 0
-      http-method GET
-      http-method-limited POST
-      http-method-limited2 POST
-    exit
-
-    action "Test_default_response-rule_defaultaction_result"
-      reset
-      type results
-      input "INPUT"
-      parse-settings-result-type none
-      transform-language none
-      output "OUTPUT"
-      no charset-transparency
-      named-inouts default
-      ssl-client-type proxy
-      output-type default
-      no transactional
-      soap-validation body
-      sql-source-type static
-      strip-signature
-      no asynchronous
-      results-mode first-available
-      retry-count 0
-      retry-interval 1000
-      no multiple-outputs
-      iterator-type XPATH
-      timeout 0
-      http-method GET
-      http-method-limited POST
-      http-method-limited2 POST
-    exit
-
-    %if% available "api-rule"
-
-    api-rule "default-api-error-rule"
-      no dynamic-actions-mode
-      action default-api-result
-    exit
-
-    api-rule "default-api-rule"
-      no dynamic-actions-mode
-      action default-api-route
-      action default-api-execute
-      action default-api-result
-      action default-api-cors
-      action default-api-client-identification
-      action default-api-ratelimit
-      action default-api-security
-    exit
-
-    api-rule "default-preflow-rule"
-      no dynamic-actions-mode
-      action default-api-cors
-      action default-html-page
-      action default-api-client-identification
-      action default-api-ratelimit
-      action default-api-security
-    exit
-
-    %endif%
-
-    %if% available "assembly"
-
-    assembly "default-preflow"
-      rule default-preflow-rule
-    exit
-
-    %endif%
-
-    matching "Test1_match_all"
-      urlmatch "*"
-      no match-with-pcre
-      no combine-with-or
-    exit
-
-    matching "Test_match_all"
-      urlmatch "*"
-      no match-with-pcre
-      no combine-with-or
-    exit
-
     stylepolicy "default"
       reset
       summary "Default Processing Policy"
@@ -553,48 +328,6 @@ data:
       xsldefault "store:///identity.xsl"
       xquerydefault "store:///reject-all-json.xq"
     exit
-
-    %if% available "wsm-rule"
-
-    wsm-rule "Test1_default_request-rule"
-      action Test1_default_request-rule_defaultaction_slm
-      action Test1_default_request-rule_defaultaction_result
-      type request-rule
-      input-filter none
-      output-filter none
-      no non-xml-processing
-      no unprocessed
-    exit
-
-    wsm-rule "Test1_default_response-rule"
-      action Test1_default_response-rule_defaultaction_result
-      type response-rule
-      input-filter none
-      output-filter none
-      no non-xml-processing
-      no unprocessed
-    exit
-
-    wsm-rule "Test_default_request-rule"
-      action Test_default_request-rule_defaultaction_slm
-      action Test_default_request-rule_defaultaction_result
-      type request-rule
-      input-filter none
-      output-filter none
-      no non-xml-processing
-      no unprocessed
-    exit
-
-    wsm-rule "Test_default_response-rule"
-      action Test_default_response-rule_defaultaction_result
-      type response-rule
-      input-filter none
-      output-filter none
-      no non-xml-processing
-      no unprocessed
-    exit
-
-    %endif%
 
     %if% available "metadata"
 
@@ -741,16 +474,6 @@ data:
 
     %endif%
 
-    %if% available "wsm-endpointrewrite"
-
-    wsm-endpointrewrite "Test"
-    exit
-
-    wsm-endpointrewrite "Test1"
-    exit
-
-    %endif%
-
     %if% available "wsm-stylepolicy"
 
     wsm-stylepolicy "default"
@@ -759,18 +482,18 @@ data:
       xsldefault "store:///identity.xsl"
     exit
 
-    wsm-stylepolicy "Test"
-      filter "store:///filter-reject-all.xsl"
-      xsldefault "store:///identity.xsl"
-      match "fragmentid" "" "Test_match_all" "Test_default_request-rule" "" "http://www.datapower.com/fragment-id#dp.all()"
-      match "fragmentid" "" "Test_match_all" "Test_default_response-rule" "" "http://www.datapower.com/fragment-id#dp.all()"
+    %endif%
+
+    %if% available "api-client-identification"
+
+    api-client-identification "default-api-client-identification"
     exit
 
-    wsm-stylepolicy "Test1"
-      filter "store:///filter-reject-all.xsl"
-      xsldefault "store:///identity.xsl"
-      match "fragmentid" "" "Test1_match_all" "Test1_default_request-rule" "" "http://www.datapower.com/fragment-id#dp.all()"
-      match "fragmentid" "" "Test1_match_all" "Test1_default_response-rule" "" "http://www.datapower.com/fragment-id#dp.all()"
+    %endif%
+
+    %if% available "api-cors"
+
+    api-cors "default-api-cors"
     exit
 
     %endif%
@@ -788,20 +511,33 @@ data:
       persistence memory
       local-directory local:///
       log-level internal
-      max-memory 0
     exit
 
     %endif%
 
-    %if% available "gateway-peering-manager"
+    %if% available "api-security-token-manager"
 
-    gateway-peering-manager
+    api-security-token-manager
       admin-state disabled
-      apic-gw-service default-gateway-peering
-      rate-limit default-gateway-peering
-      subscription default-gateway-peering
-      apiprobe default-gateway-peering
-      ratelimit-module default-gateway-peering
+      gateway-peering default-gateway-peering
+    exit
+
+    %endif%
+
+    %if% available "api-rule"
+
+    api-rule "default-api-error-rule"
+      action default-api-result
+    exit
+
+    api-rule "default-api-rule"
+      action default-api-route
+      action default-api-cors
+      action default-api-client-identification
+      action default-api-ratelimit
+      action default-api-security
+      action default-api-execute
+      action default-api-result
     exit
 
     %endif%
@@ -812,12 +548,6 @@ data:
       no ws-management
       slm-peering 10
       mode "any+soma+v2004+amp+slm+wsrr-subscription"
-      ssl-config-type server
-    exit
-
-    rest-mgmt
-      admin-state "enabled"
-      local-address "0.0.0.0" "5554"
       ssl-config-type server
     exit
 
@@ -832,7 +562,6 @@ data:
       api-gw-address 0.0.0.0
       api-gw-port 9443
       gateway-peering default-gateway-peering
-      gateway-peering-manager default
       v5-compatibility-mode
       slm-mode autounicast
       no database-mode
@@ -841,21 +570,12 @@ data:
 
     %endif%
 
-    %if% available "apiprobe-settings"
+    %if% available "api-debugprobe"
 
-    apiprobe-settings
+    api-debugprobe
       admin-state disabled
       max-records 1000
       expiration 60
-      gateway-peering default-gateway-peering
-    exit
-
-    %endif%
-
-    %if% available "api-security-token-manager"
-
-    api-security-token-manager
-      admin-state disabled
       gateway-peering default-gateway-peering
     exit
 
@@ -901,12 +621,12 @@ data:
     %if% available "control-list"
 
     control-list "default-accept-all"
-      type blocklist
+      type blacklist
       no case-insensitive
     exit
 
     control-list "default-reject-all"
-      type allowlist
+      type whitelist
       no case-insensitive
     exit
 
@@ -1000,226 +720,6 @@ data:
     %endif%
 
     exit
-
-    %if% available "wsgw"
-
-    wsgw "Test"
-      no policy-parameters
-      priority normal
-      xml-manager default
-      ssl-client-type proxy
-      default-param-namespace "http://www.datapower.com/param/config"
-      query-param-namespace "http://www.datapower.com/param/query"
-      no propagate-uri
-      monitor-processing-policy terminate-at-first-throttle
-      request-attachments strip
-      response-attachments strip
-      no request-attachments-flow-control
-      no response-attachments-flow-control
-      root-part-not-first-action process-in-order
-      front-attachment-format dynamic
-      back-attachment-format dynamic
-      mime-front-headers
-      mime-back-headers
-      stream-output-to-back buffer-until-verification
-      stream-output-to-front buffer-until-verification
-      max-message-size 0
-      no gateway-parser-limits
-      element-depth 512
-      attribute-count 128
-      max-node-size 33554432
-      forbid-external-references
-      external-references forbid
-      max-prefixes 1024
-      max-namespaces 1024
-      max-local-names 60000
-      attachment-byte-count 2000000000
-      attachment-package-byte-count 0
-      debugger-type internal
-      debug-history 25
-      no flowcontrol
-      soap-schema-url "store:///schemas/soap-envelope.xsd"
-      front-timeout 120
-      back-timeout 120
-      front-persistent-timeout 180
-      back-persistent-timeout 180
-      no include-content-type-encoding
-      persistent-connections
-      no loop-detection
-      host-rewriting
-      no chunked-uploads
-      process-http-errors
-      http-client-ip-label "X-Client-IP"
-      http-global-tranID-label "X-Global-Transaction-ID"
-      inorder-mode ""
-      wsa-mode sync2sync
-      wsa-require-aaa
-      wsa-strip-headers
-      wsa-default-replyto "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous"
-      wsa-default-faultto "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous"
-      no wsa-force
-      wsa-genstyle sync
-      wsa-http-async-response-code 204
-      wsa-timeout 120
-      no wsrm
-      wsrm-sequence-expiration 3600
-      wsrm-destination-accept-create-sequence
-      wsrm-destination-maximum-sequences 400
-      no wsrm-destination-inorder
-      wsrm-destination-maximum-inorder-queue-length 10
-      no wsrm-destination-accept-offers
-      no wsrm-request-force
-      no wsrm-response-force
-      no wsrm-source-request-create-sequence
-      no wsrm-source-response-create-sequence
-      no wsrm-source-make-offer
-      no wsrm-source-sequence-ssl
-      wsrm-source-maximum-sequences 400
-      wsrm-source-retransmission-interval 10
-      wsrm-source-exponential-backoff
-      wsrm-source-retransmit-count 4
-      wsrm-source-maximum-queue-length 30
-      wsrm-source-request-ack-count 1
-      wsrm-source-inactivity-close-interval 360
-      no force-policy-exec
-      rewrite-errors
-      delay-errors
-      delay-errors-duration 3000
-      http-server-version HTTP/1.1
-      request-type soap
-      response-type soap
-      follow-redirects
-      no compression
-      no enable-compressed-payload-passthrough
-      type static-from-wsdl
-      no autocreate-sources
-      ssl-config-type proxy
-      endpoint-rewrite-policy Test
-      stylepolicy Test
-      remote-retry
-        no auto-retry
-        retry-interval 1
-        reporting-interval 1
-        total-retries 1
-      exit
-      wssec11-enckey-cache 0
-      no preserve-key-chain
-      no decrypt-with-key-from-ed
-      soap-action-policy lax
-      wsmagent-monitor
-      wsmagent-monitor-capture-mode all-messages
-      no process-response-rule-for-oneway-wsdls
-    exit
-
-    wsgw "Test1"
-      no policy-parameters
-      priority normal
-      xml-manager default
-      ssl-client-type proxy
-      default-param-namespace "http://www.datapower.com/param/config"
-      query-param-namespace "http://www.datapower.com/param/query"
-      no propagate-uri
-      monitor-processing-policy terminate-at-first-throttle
-      request-attachments strip
-      response-attachments strip
-      no request-attachments-flow-control
-      no response-attachments-flow-control
-      root-part-not-first-action process-in-order
-      front-attachment-format dynamic
-      back-attachment-format dynamic
-      mime-front-headers
-      mime-back-headers
-      stream-output-to-back buffer-until-verification
-      stream-output-to-front buffer-until-verification
-      max-message-size 0
-      no gateway-parser-limits
-      element-depth 512
-      attribute-count 128
-      max-node-size 33554432
-      forbid-external-references
-      external-references forbid
-      max-prefixes 1024
-      max-namespaces 1024
-      max-local-names 60000
-      attachment-byte-count 2000000000
-      attachment-package-byte-count 0
-      debugger-type internal
-      debug-history 25
-      no flowcontrol
-      soap-schema-url "store:///schemas/soap-envelope.xsd"
-      front-timeout 120
-      back-timeout 120
-      front-persistent-timeout 180
-      back-persistent-timeout 180
-      no include-content-type-encoding
-      persistent-connections
-      no loop-detection
-      host-rewriting
-      no chunked-uploads
-      process-http-errors
-      http-client-ip-label "X-Client-IP"
-      http-global-tranID-label "X-Global-Transaction-ID"
-      inorder-mode ""
-      wsa-mode sync2sync
-      wsa-require-aaa
-      wsa-strip-headers
-      wsa-default-replyto "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous"
-      wsa-default-faultto "http://schemas.xmlsoap.org/ws/2004/08/addressing/role/anonymous"
-      no wsa-force
-      wsa-genstyle sync
-      wsa-http-async-response-code 204
-      wsa-timeout 120
-      no wsrm
-      wsrm-sequence-expiration 3600
-      wsrm-destination-accept-create-sequence
-      wsrm-destination-maximum-sequences 400
-      no wsrm-destination-inorder
-      wsrm-destination-maximum-inorder-queue-length 10
-      no wsrm-destination-accept-offers
-      no wsrm-request-force
-      no wsrm-response-force
-      no wsrm-source-request-create-sequence
-      no wsrm-source-response-create-sequence
-      no wsrm-source-make-offer
-      no wsrm-source-sequence-ssl
-      wsrm-source-maximum-sequences 400
-      wsrm-source-retransmission-interval 10
-      wsrm-source-exponential-backoff
-      wsrm-source-retransmit-count 4
-      wsrm-source-maximum-queue-length 30
-      wsrm-source-request-ack-count 1
-      wsrm-source-inactivity-close-interval 360
-      no force-policy-exec
-      rewrite-errors
-      delay-errors
-      delay-errors-duration 3000
-      http-server-version HTTP/1.1
-      request-type soap
-      response-type soap
-      follow-redirects
-      no compression
-      no enable-compressed-payload-passthrough
-      type static-from-wsdl
-      no autocreate-sources
-      ssl-config-type proxy
-      endpoint-rewrite-policy Test1
-      stylepolicy Test1
-      remote-retry
-        no auto-retry
-        retry-interval 1
-        reporting-interval 1
-        total-retries 1
-      exit
-      wssec11-enckey-cache 0
-      no preserve-key-chain
-      no decrypt-with-key-from-ed
-      soap-action-policy lax
-      wsmagent-monitor
-      wsmagent-monitor-capture-mode all-messages
-      no process-response-rule-for-oneway-wsdls
-    exit
-
-    %endif%
 
     %if% available "domain-availability"
 
@@ -1334,6 +834,12 @@ data:
 
     %endif%
 
+    rest-mgmt
+      admin-state "enabled"
+      local-address "0.0.0.0" "5554"
+      ssl-config-type server
+    exit
+
     %if% available "b2b-viewer-mgmt"
 
     b2b-viewer-mgmt
@@ -1380,37 +886,7 @@ data:
 
     %endif%
 
-    %if% available "slm-policy"
-
-    slm-policy "Test"
-      eval-method execute-all-statements
-      no api-mgmt
-    exit
-
-    slm-policy "Test1"
-      eval-method execute-all-statements
-      no api-mgmt
-    exit
-
-    %endif%
-
-    %if% available "api-client-identification"
-
-    api-client-identification "default-api-client-identification"
-      title "default-client-identification"
-      correlation-path "$.assembly.execute[2]"
-    exit
-
-    %endif%
-
-    %if% available "api-cors"
-
-    api-cors "default-api-cors"
-      title "default-cors"
-      correlation-path "$.assembly.execute[0]"
-    exit
-
-    %endif%
+    exec config:///auto-user.cfg
 
     %if% available "wsm-agent"
 
@@ -1425,6 +901,10 @@ data:
       push-interval 100
       push-priority normal
     exit
+
+    %endif%
+
+
 
     %endif%
 
