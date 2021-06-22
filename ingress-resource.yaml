@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+ name: ingress-datapower
+ annotations:
+   kubernetes.io/ingress.class: "public-iks-k8s-nginx"
+   nginx.ingress.kubernetes.io/backend-protocol: "HTTPS"
+spec:
+ tls:
+ - hosts:
+   - mscpikstest-bed33e41b072e599ceb6f65b534f66f5-0000.us-south.containers.appdomain.cloud
+   secretName: mscpikstest-bed33e41b072e599ceb6f65b534f66f5-0000
+ rules:
+ - host: dp.mscpikstest-bed33e41b072e599ceb6f65b534f66f5-0000.us-south.containers.appdomain.cloud
+   http:
+     paths:
+     - path: /
+       backend:
+         serviceName: datapowerservice
+         servicePort: 9092
+     - path: /metrics
+       backend:
+         serviceName: datapower-operator-metrics
+         servicePort: 8383
+     - path: /mgmt
+       backend:
+         serviceName: datapowerservice
+         servicePort: 5554
