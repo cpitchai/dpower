@@ -9,7 +9,7 @@ spec:
     use: production
     license: L-RJON-BYDR3Q
   version: 10.0-cd
-  replicas: 1
+  replicas: 3
   users:
   - name: admin
     passwordSecret: admin-credentials
