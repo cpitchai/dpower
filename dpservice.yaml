@@ -19,12 +19,4 @@ spec:
     dpApp:
       config:
       - dev-defaultdp-cfg
-  resources:
-    limits:
-      cpu: "1"
-      memory: 4Gi
-    requests:
-      cpu: "1"
-      memory: 4Gi
-
-
+  
