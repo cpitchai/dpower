@@ -15,15 +15,15 @@ spec:
     passwordSecret: admin-credentials
     accessLevel: privileged
   domains:
-  - name: default 
+  - name: default
     dpApp:
       config:
       - dev-defaultdp-cfg
   resources:
-   limits:
-     cpu:"1"
-     memory: 4Gi
-   requests:
-     cpu: "1"
-     memory: 4Gi
+    limits:
+      cpu: "1"
+      memory: 4Gi
+    requests:
+      cpu: "1"
+      memory: 4Gi
   
