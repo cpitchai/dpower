@@ -10,6 +10,12 @@ spec:
     license: L-RJON-BYDR3Q
   version: 10.0-cd
   replicas: 1
+  resources:	  
+    limits:	    
+      memory: 4Gi	
+    requests:	
+      cpu: '1'	      
+      memory: 4Gi
   users:
   - name: admin
     passwordSecret: admin-credentials
@@ -19,9 +25,4 @@ spec:
     dpApp:
       config:
       - dev-defaultdp-cfg
-  resources:
-    limits:
-      cpu: "1"
-      memory: 4Gi
-
  
