@@ -11,7 +11,8 @@ spec:
   version: 10.0-cd
   replicas: 3
   resources:	  
-    limits:	    
+    limits:
+      cpu: '1'
       memory: 4Gi	
     requests:	
       cpu: '1'	      
