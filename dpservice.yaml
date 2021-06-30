@@ -19,4 +19,6 @@ spec:
     dpApp:
       config:
       - dev-defaultdp-cfg
+  resources:
+    limits:
  
