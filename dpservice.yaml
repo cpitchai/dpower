@@ -18,11 +18,13 @@ spec:
   - name: default 
     dpApp:
       config:
-      - default-cfg
-
-
-
-
-
+      - dev-defaultdp-cfg
+  resources:
+    limits:
+      cpu: "1"
+      memory: 4Gi
+    requests:
+      cpu: "1"
+      memory: 4Gi
 
 
