@@ -9,7 +9,7 @@ spec:
     use: nonproduction
     license: L-RJON-BYDR3Q
   version: 10.0-cd
-  replicas: 1
+  replicas: 3
   resources:	  
     limits:
       memory: 4Gi
