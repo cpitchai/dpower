@@ -4,8 +4,6 @@ metadata:
   name: dpservice
   namespace: datapower
 spec:
-  annotations:
-    prometheus.io/target: "http://169.46.104.181:30000"
   license:
     accept: true
     use: nonproduction
